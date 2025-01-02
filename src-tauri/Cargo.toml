@@ -1,6 +1,6 @@
 [package]
 name = "service-desk-kiosk"
-version = "0.1.0"
+version = "0.1.1"
 description = "Service Desk Kiosk is a cross-platform desktop application built using the Tauri Framework. This application is designed to create a kiosk-like interface with specific configurations and features for ease of use in service desk scenarios."
 authors = ["Drew Chase"]
 edition = "2021"
@@ -26,3 +26,5 @@ winapi = {version = "0.3.9", features = ["winuser", "libloaderapi"] }
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-autostart = "2"
+tauri-plugin-single-instance = "2"
+tauri-plugin-updater = "2"
