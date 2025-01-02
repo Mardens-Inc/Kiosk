@@ -26,18 +26,22 @@ reg add "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics" /v MinAnimate /t
 
 :: Unpin all items from taskbar
 echo Unpinning all items from taskbar...
-powershell -Command "& {$taskbarItems = ((New-Object -ComObject Shell.Application).NameSpace(0).Items() | Where-Object {$_.IsShortcut -and $_.Path -like '*Taskbar*'}).InvokeVerb('Unpin from taskbar')}"
+powershell -Command "Remove-Item -Path '$env:APPDATA\Microsoft\Internet Explorer\Quick Launch\User Pinned\Taskbar\*' -Force -Recurse -ErrorAction SilentlyContinue"
+reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband" /f
 
 :: Set taskbar to auto-hide
 echo Setting taskbar to auto-hide...
-reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\StuckRects3" /v Settings /t REG_BINARY /d 0000000028010000000000001000000003010000 /f
-taskkill /im explorer.exe /f & start explorer.exe
+:: Set taskbar to auto-hide by modifying StuckRects3 registry key
+echo Enabling auto-hide taskbar through StuckRects3 registry key...
+reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\StuckRects3" /v Settings > "%TEMP%\StuckRects3_backup.reg"
+for /f "skip=2 tokens=2*" %%A in ('reg query "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\StuckRects3" /v Settings') do set data=%%B
+set modified=%data:~0,10%03%data:~12%
+reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\StuckRects3" /v Settings /t REG_BINARY /d %modified% /f
 
 :: Remove taskbar search input and widgets
 echo Removing taskbar search input and widgets...
 reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v SearchboxTaskbarMode /t REG_DWORD /d 0 /f
 reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v ShowTaskViewButton /t REG_DWORD /d 0 /f
-taskkill /im explorer.exe /f & start explorer.exe
 
 :: Set up AutoLogon
 echo Configuring AutoLogon...
@@ -47,8 +51,13 @@ reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogo
 
 :: Downlaod the Kiosk Application]
 echo Downloading Kiosk Application...
-curl -o "%USERPROFILE%\Desktop\KioskApp.exe" "https://github.com/Mardens-Inc/Kiosk/releases/latest/download/service-desk-kiosk.exe"
+powershell -Command "curl -o '~\Desktop\KioskApp.exe' 'https://github.com/Mardens-Inc/Kiosk/releases/latest/download/service-desk-kiosk.exe'"
 
+echo Starting the Kiosk Application
+powershell -Command "~\Desktop\KioskApp.exe"
+
+taskkill /im explorer.exe /f & start explorer.exe
+timeout /T 10 /nobreak
 
 :: Inform the user
 echo Script completed successfully. The computer will now restart.
