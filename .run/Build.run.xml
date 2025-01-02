@@ -2,7 +2,10 @@
   <configuration default="false" name="Build" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
     <option name="command" value="tauri build" />
     <option name="workingDirectory" value="file://$PROJECT_DIR$/src-tauri" />
-    <envs />
+    <envs>
+      <env name="TAURI_SIGNING_PRIVATE_KEY" value="dW50cnVzdGVkIGNvbW1lbnQ6IHJzaWduIGVuY3J5cHRlZCBzZWNyZXQga2V5ClJXUlRZMEl5Q3Y2eTRkcXUzWHBrcmtVWFdaMHZtTm41eUtBa0htT2tqQzQyTUtOWFJUa0FBQkFBQUFBQUFBQUFBQUlBQUFBQWpNVGh0NGNnYncxWVZsbGFNQlZZOXdKVmZ2eHV5V2o2RHBSYUNvYVVFQStHSFRuYzF3c21zbWg0clNubGJMTG5KMGVTZ1ZsaE8rWHhNL3RtR2E1bnpCbEtsd0w3RCt0anRSbTRLcWJnb3dxZTJqb3U1OUNDQTcrdGYzaUtvaFhyQkpIMEJGVmliWE09Cg==" />
+      <env name="TAURI_SIGNING_PRIVATE_KEY_PASSWORD" value="19MRCC77!" />
+    </envs>
     <option name="emulateTerminal" value="true" />
     <option name="channel" value="DEFAULT" />
     <option name="requiredFeatures" value="true" />
