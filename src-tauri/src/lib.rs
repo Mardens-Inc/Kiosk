@@ -45,8 +45,6 @@ pub fn run() {
                     "registered for autostart? {}",
                     autostart_manager.is_enabled().unwrap()
                 );
-                // Disable autostart
-                let _ = autostart_manager.disable();
             }
             Ok(())
         })
