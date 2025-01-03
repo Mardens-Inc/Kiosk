@@ -51,13 +51,11 @@ reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogo
 
 :: Downlaod the Kiosk Application]
 echo Downloading Kiosk Application...
-powershell -Command "curl -o '~\Desktop\KioskApp.exe' 'https://github.com/Mardens-Inc/Kiosk/releases/latest/download/service-desk-kiosk.exe'"
+powershell -Command "curl -o 'C:\Users\Mardens\Desktop\KioskApp.exe' 'https://github.com/Mardens-Inc/Kiosk/releases/latest/download/service-desk-kiosk.exe'"
 
-echo Starting the Kiosk Application
-powershell -Command "~\Desktop\KioskApp.exe"
-
-taskkill /im explorer.exe /f & start explorer.exe
-timeout /T 10 /nobreak
+:: Set up Kiosk Mode
+@REM echo Configuring Kiosk Mode...
+@REM reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v Shell /t REG_SZ /d "explorer.exe" /f
 
 :: Inform the user
 echo Script completed successfully. The computer will now restart.
