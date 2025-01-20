@@ -1,13 +1,13 @@
 @echo off
 :: Requires administrative privileges
-if not "%~1"=="" (
-    echo Script already elevated.
-) else (
-    :: Relaunch script with administrative privileges
-    echo Requesting administrative privileges...
-    powershell -Command "Start-Process '%~f0' -ArgumentList 'elevated' -Verb runAs"
-    exit
-)
+@REM if not "%~1"=="" (
+@REM     echo Script already elevated.
+@REM ) else (
+@REM     :: Relaunch script with administrative privileges
+@REM     echo Requesting administrative privileges...
+@REM     powershell -Command "Start-Process '%~f0' -ArgumentList 'elevated' -Verb runAs"
+@REM     exit
+@REM )
 
 :: Disable desktop icons
 echo Disabling desktop icons...
@@ -27,7 +27,7 @@ reg add "HKEY_CURRENT_USER\Control Panel\Desktop\WindowMetrics" /v MinAnimate /t
 :: Unpin all items from taskbar
 echo Unpinning all items from taskbar...
 powershell -Command "Remove-Item -Path '$env:APPDATA\Microsoft\Internet Explorer\Quick Launch\User Pinned\Taskbar\*' -Force -Recurse -ErrorAction SilentlyContinue"
-reg delete "HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband" /f
+reg delete "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband" /f
 
 :: Set taskbar to auto-hide
 echo Setting taskbar to auto-hide...
@@ -43,13 +43,18 @@ echo Removing taskbar search input and widgets...
 reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Search" /v SearchboxTaskbarMode /t REG_DWORD /d 0 /f
 reg add "HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" /v ShowTaskViewButton /t REG_DWORD /d 0 /f
 
-:: Set up AutoLogon
-echo Configuring AutoLogon...
-reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v AutoAdminLogon /t REG_SZ /d 1 /f
-reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v DefaultUserName /t REG_SZ /d "Mardens" /f
-reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v DefaultPassword /t REG_SZ /d "mardens" /f
+:: Set up AutoLogon (admin section)
+echo Configuring AutoLogon (requires admin privileges)...
+powershell -Command "Start-Process cmd -ArgumentList '/c reg add \"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\" /v AutoAdminLogon /t REG_SZ /d 1 /f' -Verb RunAs"
+powershell -Command "Start-Process cmd -ArgumentList '/c reg add \"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\" /v DefaultUserName /t REG_SZ /d \"Mardens\" /f' -Verb RunAs"
+powershell -Command "Start-Process cmd -ArgumentList '/c reg add \"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\" /v DefaultPassword /t REG_SZ /d \"mardens\" /f' -Verb RunAs"
 
-:: Downlaod the Kiosk Application]
+
+:: Restart explorer
+taskkill /IM explorer.exe /F
+start explorer.exe
+
+:: Download the Kiosk Application
 echo Downloading Kiosk Application...
 powershell -Command "curl -o 'C:\Users\Mardens\Desktop\KioskApp.exe' 'https://github.com/Mardens-Inc/Kiosk/releases/latest/download/service-desk-kiosk.exe'"
 
@@ -57,6 +62,7 @@ powershell -Command "curl -o 'C:\Users\Mardens\Desktop\KioskApp.exe' 'https://gi
 @REM echo Configuring Kiosk Mode...
 @REM reg add "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon" /v Shell /t REG_SZ /d "explorer.exe" /f
 
+pause
 :: Inform the user
 echo Script completed successfully. The computer will now restart.
 shutdown /r /t 0
