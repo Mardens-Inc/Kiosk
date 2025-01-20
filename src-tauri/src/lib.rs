@@ -1,4 +1,5 @@
 use std::thread;
+use tauri::Manager;
 use tauri_plugin_updater::UpdaterExt;
 
 mod windows_api;
@@ -7,7 +8,7 @@ mod windows_api;
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_updater::Builder::new().build())
-        .plugin(tauri_plugin_single_instance::init(|app, args, cwd| {
+        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             use tauri::Manager;
             let _ = app
                 .get_webview_window("main")
@@ -22,9 +23,9 @@ pub fn run() {
 
                 let handle = app.handle().clone();
                 tauri::async_runtime::spawn(async move {
-                    update(handle).await.unwrap();
+                    update(&handle).await.unwrap();
+                    enable_autocomplete(&handle).await.unwrap();
                 });
-
 
                 thread::spawn(|| {
                     println!("Starting Windows key hook...");
@@ -53,8 +54,7 @@ pub fn run() {
         .expect("error while running tauri application");
 }
 
-async fn update(app: tauri::AppHandle) -> tauri_plugin_updater::Result<()> {
-
+async fn update(app: &tauri::AppHandle) -> tauri_plugin_updater::Result<()> {
     if let Some(update) = app.updater()?.check().await? {
         let mut downloaded = 0;
 
@@ -77,3 +77,52 @@ async fn update(app: tauri::AppHandle) -> tauri_plugin_updater::Result<()> {
 
     Ok(())
 }
+
+async fn enable_autocomplete(app: &tauri::AppHandle) -> tauri_plugin_updater::Result<()> {
+    if let Some(window) = app.get_webview_window("main") {
+        let mut last_url = window.url()?;
+        loop {
+            let current_url = window.url()?;
+            if current_url != last_url {
+                last_url = current_url;
+                println!("Url: {}", window.url()?);
+                window.eval(AUTOCOMPLETE_SCRIPT)?;
+            }
+            tokio::time::sleep(std::time::Duration::from_millis(500)).await;
+        }
+    }
+
+    Ok(())
+}
+
+const AUTOCOMPLETE_SCRIPT: &str = r#"
+console.log('ticking page')
+const update = setInterval(()=>{
+    document.querySelectorAll("\#fmiwebd-742712558-overlays \#login_dialog_body input:not([autocomplete='custom'])")
+    .forEach(input=>
+            {
+                console.log(`Adding autocomplete listener to`, input)
+                const result = getState(input)
+                if(result) input.value = result;
+                input.setAttribute("autocomplete", "custom")
+
+                input.addEventListener("blur", ()=>saveState(input))
+                clearInterval(update)
+            }
+        )
+}, 100)
+
+function saveState(input)
+{
+    const selector = `${input.getAttribute("type")}-${input.getAttribute("placeholder")}`
+    localStorage.setItem(selector, input.value);
+    console.log("Saving State", selector, input.value)
+}
+
+function getState(input)
+{
+    const selector = `${input.getAttribute("type")}-${input.getAttribute("placeholder")}`
+    console.log("Loading State", selector)
+    return localStorage.getItem(selector);
+}
+"#;
