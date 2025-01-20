@@ -55,28 +55,47 @@ pub fn run() {
 }
 
 async fn update(app: &tauri::AppHandle) -> tauri_plugin_updater::Result<()> {
-    if let Some(update) = app.updater()?.check().await? {
-        let mut downloaded = 0;
+    // Print the current platform and version
+    let platform = std::env::consts::OS;
+    let arch = std::env::consts::ARCH;
+    println!("Current platform: {}-{}", platform, arch);
 
-        // alternatively we could also call update.download() and update.install() separately
-        update
-            .download_and_install(
-                |chunk_length, content_length| {
-                    downloaded += chunk_length;
-                    println!("downloaded {downloaded} from {content_length:?}");
-                },
-                || {
-                    println!("download finished");
-                },
-            )
-            .await?;
+    match app.updater()?.check().await {
+        Ok(Some(update)) => {
+            let mut downloaded = 0;
 
-        println!("update installed");
-        app.restart();
+            // Download and install the update
+            if let Err(e) = update
+                .download_and_install(
+                    |chunk_length, content_length| {
+                        downloaded += chunk_length;
+                        println!("Downloaded {} bytes from {:?}", downloaded, content_length);
+                    },
+                    || {
+                        println!("Download finished");
+                    },
+                )
+                .await
+            {
+                eprintln!("Failed to download and install the update: {}", e);
+                return Err(e);
+            }
+
+            println!("Update installed successfully");
+            app.restart();
+        }
+        Ok(None) => {
+            println!("No updates available");
+        }
+        Err(e) => {
+            eprintln!("Failed to check for updates: {}", e);
+            return Err(e);
+        }
     }
 
     Ok(())
 }
+
 
 async fn enable_autocomplete(app: &tauri::AppHandle) -> tauri_plugin_updater::Result<()> {
     if let Some(window) = app.get_webview_window("main") {

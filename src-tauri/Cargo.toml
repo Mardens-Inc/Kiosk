@@ -1,6 +1,6 @@
 [package]
 name = "service-desk-kiosk"
-version = "0.1.3"
+version = "0.1.4"
 description = "Service Desk Kiosk is a cross-platform desktop application built using the Tauri Framework. This application is designed to create a kiosk-like interface with specific configurations and features for ease of use in service desk scenarios."
 authors = ["Drew Chase"]
 edition = "2021"
