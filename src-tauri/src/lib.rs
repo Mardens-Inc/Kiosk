@@ -127,9 +127,16 @@ const update = setInterval(()=>{
 
                 input.addEventListener("blur", ()=>saveState(input))
                 clearInterval(update)
+                focusAllInputs()
             }
         )
 }, 100)
+
+function focusAllInputs()
+{
+    document.querySelectorAll("\#fmiwebd-742712558-overlays \#login_dialog_body input:not([autocomplete='custom'])")
+    .forEach(input=>input.focus())
+}
 
 function saveState(input)
 {
