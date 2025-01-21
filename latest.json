@@ -1,9 +1,9 @@
 {
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"platforms": {
 		"windows-x86_64": {
-			"signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTRFQzQ1RqMm4vQ2g1cGt6WDNSMXAzUmlxMjRRWkViaWhrSVlycnA1NU9abW9jUEJjTU85bW1Hd1pQSzh1OFhZaUszb1dCd2VJekdtTlNjYk5xdUpmK2JSd1F3WWIvTkEwPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzM3NDA3MzMxCWZpbGU6c2VydmljZS1kZXNrLWtpb3NrXzAuMS40X3g2NF9lbi1VUy5tc2kKdXNCaERJeWx5eVB3K2tmaWxHNi92MlVxWmVqdndpOXNScU1oSDFiY3NISnVPNWZVSlRrUWJRQVhQRTRBVGJZTXE1bzY0Q1pLaVBJTmxJbEFyWW9sQWc9PQo=",
-			"url": "https://github.com/Mardens-Inc/Kiosk/releases/latest/download/service-desk-kiosk_x64_en-US.msi"
+			"signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVTRFQzQ1RqMm4vQ3BqOE1UODNxRXJOL1lTS3JrQ09hUWtCYkwvaldpOFlFc2ZIcXBNUGN3eVRscVg3Q1hMcHRMZ3ZpaFNIWmY2TVR5WWVPQ2FTc0ZhWUF1OUJTMS9RcUFZPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzM3NDY3Mjc4CWZpbGU6c2VydmljZS1kZXNrLWtpb3NrXzAuMS41X3g2NF9lbi1VUy5tc2kKdUJmQTF5OW5LQkxlMkUxN3Fzdmgwd0JtMkRpRjVndEdNSXBocHo2MFNHeVByWStjZkloVGJIOU1PMk9tOHZlVFo2cDJUV0UvU21UYzhuL1JTSjMyREE9PQo=",
+			"url": "https://github.com/Mardens-Inc/Kiosk/releases/latest/download/service-desk-kiosk_0.1.5_x64_en-US.msi"
 		}
 	}
 }
